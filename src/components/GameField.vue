@@ -2,10 +2,11 @@
   <div class="game-container">
     <!-- <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" /> -->
     <div class="board shadow-border">
-      <div v-for="(c, index) in this.board" :key="index">
-        <!-- {{c.value}} -->
+    <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" />
+      <!-- <div v-for="(c, index) in this.board" :key="index">
+        {{c.value}}
         <Cell :cell="c"/>
-      </div>
+      </div> -->
     </div>
 
   </div>
@@ -24,17 +25,46 @@ export default {
       board: [],
     };
   },
-  created() {
-    this.resetBoard();
+  mounted() {
+    // this.resetBoard();
+    this.newGame();
+  },
+  computed: {
+    checkGameOver() {
+      for (let i = 0; i < this.board.length; i += 1) {
+        if (this.board[i].value === 0) { return false; }
+      }
+      return true;
+    },
   },
   methods: {
-    resetBoard() {
-      this.board = Array(16).fill({ value: 0 });
-      console.log('LOSHARARARARARARARARARARAR');
-      console.log(this.board[4].value);
-      console.log('LOSHARARARARARARARARARARAR');
-    },
+    // generate number on free cell
     generateNum() {
+      if (this.checkGameOver) { return; }
+
+      const getRandomCell = () => {
+        const getRandomPosition = Math.floor(Math.random() * this.board.length);
+        return getRandomPosition;
+      };
+      let randomCell = getRandomCell();
+      while (this.board[randomCell].value !== 0) {
+        randomCell = getRandomCell();
+        // console.log('Try to find ', randomCell);
+      }
+      // Generate 2 or 4
+      // const twoOrFour = (Math.floor(Math.random() * 2) + 1) * 2;
+      this.board[randomCell].value = (Math.floor(Math.random() * 2) + 1) * 2;
+    },
+    newGame() {
+      this.resetBoard();
+      this.generateNum();
+      this.generateNum();
+    },
+    resetBoard() {
+      this.board = Array(16);
+      for (let i = 0; i < this.board.length; i += 1) {
+        this.board[i] = { value: 0 };
+      }
     },
   },
 };

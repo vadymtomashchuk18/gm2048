@@ -1,5 +1,5 @@
 <template>
-  <div class="cell" :class="{'tile-empty': emptyTile}">
+  <div class="cell" :class="{'tile-empty': emptyTile}" :style="{backgroundColor: backgroundColor}">
     {{ displayValue }}
   </div>
 </template>
@@ -13,6 +13,26 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      colors: [
+        '#c2c2c2',
+        '#c7a2a2',
+        '#eb8787',
+        '#f05757',
+        '#cf2424',
+        '#9b2222',
+        '#661e1e',
+        '#3d0909',
+        '#3a1004',
+        '#86260c',
+        '#be4726',
+        '#ff7b00',
+        '#a55000',
+        '#613c1a',
+      ],
+    };
+  },
   computed: {
     value() {
       return this.cell.value;
@@ -24,6 +44,9 @@ export default {
     emptyTile() {
       return this.displayValue === null;
     },
+    backgroundColor() {
+      return this.colors[this.value.toString(2).length - 1];
+    },
   },
 };
 
@@ -33,8 +56,8 @@ export default {
 .cell {
   font-size: 26px;
   font-weight: bold;
-  background-color: rgb(194, 194, 194);
-  color: rgb(255, 255, 255);
+  /* background-color: #613c1a; */
+  color: #ffffff;
   box-sizing: border-box;
   display: flex;
   margin: 6px;
