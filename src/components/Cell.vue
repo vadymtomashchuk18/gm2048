@@ -1,5 +1,7 @@
 <template>
-  <div class="cell">8192</div>
+  <div class="cell" :class="{'tile-empty': emptyTile}">
+    {{ displayValue }}
+  </div>
 </template>
 
 <script>
@@ -11,16 +13,28 @@ export default {
       required: true,
     },
   },
+  computed: {
+    value() {
+      return this.cell.value;
+    },
+    displayValue() {
+      if (this.value > 0) { return this.value; }
+      return null;
+    },
+    emptyTile() {
+      return this.displayValue === null;
+    },
+  },
 };
 
 </script>
 
 <style scoped>
 .cell {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   background-color: rgb(194, 194, 194);
-  color: rgb(210, 248, 201);
+  color: rgb(255, 255, 255);
   box-sizing: border-box;
   display: flex;
   margin: 6px;

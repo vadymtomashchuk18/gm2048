@@ -1,9 +1,10 @@
 <template>
   <div class="game-container">
+    <!-- <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" /> -->
     <div class="board shadow-border">
-      <div v-for="(c, index) in board" :key="index">
+      <div v-for="(c, index) in this.board" :key="index">
         <!-- {{c.value}} -->
-        <Cell />
+        <Cell :cell="c"/>
       </div>
     </div>
 
@@ -23,17 +24,17 @@ export default {
       board: [],
     };
   },
-  mounted() {
+  created() {
     this.resetBoard();
   },
   methods: {
     resetBoard() {
-      this.board = Array(16).map((_, index) => ({
-        cell: {
-          id: index,
-          value: 0,
-        },
-      }));
+      this.board = Array(16).fill({ value: 0 });
+      console.log('LOSHARARARARARARARARARARAR');
+      console.log(this.board[4].value);
+      console.log('LOSHARARARARARARARARARARAR');
+    },
+    generateNum() {
     },
   },
 };
@@ -41,6 +42,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.game-container {
+  display: flex;
+  justify-content: center;
+}
 .board {
   display: flex;
   flex-wrap: wrap;
@@ -55,23 +60,23 @@ export default {
   background-color: initial;
 }
 
-.cell {
-  font-size: 24px;
-  font-weight: bold;
-  background-color: rgb(194, 194, 194);
-  color: rgb(210, 248, 201);
-  box-sizing: border-box;
-  display: flex;
-  margin: 6px;
-  justify-content: center;
-  align-items: center;
+// .cell {
+//   font-size: 24px;
+//   font-weight: bold;
+//   background-color: rgb(194, 194, 194);
+//   color: rgb(255, 255, 255);
+//   box-sizing: border-box;
+//   display: flex;
+//   margin: 6px;
+//   justify-content: center;
+//   align-items: center;
 
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  /* border: 4px solid #666; */
-  border-radius: 4px;
-  width: 80px;
-  height: 80px;
-}
+//   display: flex;
+//   justify-content: space-around;
+//   align-items: center;
+//   /* border: 4px solid #666; */
+//   border-radius: 4px;
+//   width: 80px;
+//   height: 80px;
+// }
 </style>
