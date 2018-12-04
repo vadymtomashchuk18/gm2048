@@ -101,7 +101,8 @@ export default {
     moveRight(type) {
       const changeLists = this.getChangeLists(type);
 
-      const board = _.cloneDeep(chunk(this.board, 4));
+      console.log(chunk(this.board, 4));
+      const board = chunk(this.board, 4);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeRight(board, a, changeLists);
         this.slideRight(board, a, changeLists);
@@ -172,7 +173,7 @@ export default {
     moveLeft(type) {
       const changeLists = this.getChangeLists(type);
 
-      const board = _.cloneDeep(chunk(this.board, 4));
+      const board = chunk(this.board, 4);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
@@ -240,7 +241,7 @@ export default {
     moveDown(type) {
       const changeLists = this.getChangeLists(type);
 
-      const board = _.cloneDeep(chunk(this.board, 4));
+      const board = (chunk(this.board, 4));
       for (let a = 0; a < board.length; a += 1) {
         this.mergeDown(board, a, changeLists);
         this.slideDown(board, a, changeLists);
@@ -305,7 +306,7 @@ export default {
     moveUp(type) {
       const changeLists = this.getChangeLists(type);
 
-      const board = _.cloneDeep(chunk(this.board, 4));
+      const board = chunk(this.board, 4);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeUp(board, a, changeLists);
         this.slideUp(board, a, changeLists);
@@ -375,18 +376,18 @@ export default {
         if ( key >= 37 && key <= 40) {
           if (key === 39) {
             // right
-            this.moveRight();
+            this.moveRight('gamestate');
           } else if (key === 37) {
             // left
-            this.moveLeft();
+            this.moveLeft('gamestate');
           } else if (key === 38) {
             // up
-            this.moveUp();
+            this.moveUp('gamestate');
           } else if (key === 40) {
             // down
-            this.moveDown();
+            this.moveDown('gamestate');
           }
-          this.animate();
+          // this.animate();
         }
       });
     },
