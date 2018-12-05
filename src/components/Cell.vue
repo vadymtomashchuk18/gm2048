@@ -12,6 +12,10 @@ export default {
       type: Object,
       required: true,
     },
+    actValue: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -38,14 +42,14 @@ export default {
       return this.cell.value;
     },
     displayValue() {
-      if (this.value > 0) { return this.value; }
+      if (this.actValue > 0) { return this.actValue; }
       return null;
     },
     emptyTile() {
       return this.displayValue === null;
     },
     backgroundColor() {
-      return this.colors[this.value.toString(2).length - 1];
+      return this.colors[this.actValue.toString(2).length - 1];
     },
   },
 };

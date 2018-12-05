@@ -2,18 +2,17 @@
   <div class="game-container">
     <!-- <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" /> -->
     <div class="board shadow-border">
-    <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" />
-      <!-- <div v-for="(c, index) in this.board" :key="index">
-        {{c.value}}
-        <Cell :cell="c"/>
-      </div> -->
+      <div v-for="(c, index) in this.board" :key="index">
+        <!-- {{c.value}} -->
+        <Cell :cell="c" :actValue="c.value"></Cell >
+      </div>
     </div>
 
   </div>
 </template>
 
 <script>
-import _ from '../libs/lodash';
+// import _ from '../libs/lodash';
 import Cell from './Cell.vue';
 
 const chunk = require('chunk');
@@ -107,6 +106,11 @@ export default {
         this.mergeRight(board, a, changeLists);
         this.slideRight(board, a, changeLists);
       }
+      this.board = (board.reduce((flat, current) => {
+        return flat.concat(current);
+      }, []));
+      console.log('After', this.board);
+      this.generateNum();
     },
 
     mergeRight(board, a, changeLists) {
@@ -172,12 +176,18 @@ export default {
 
     moveLeft(type) {
       const changeLists = this.getChangeLists(type);
-
+      
       const board = chunk(this.board, 4);
+      console.log('Before', board);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
       }
+      this.board = (board.reduce((flat, current) => {
+        return flat.concat(current);
+      }, []));
+      console.log('After', this.board);
+      this.generateNum();
     },
 
     mergeLeft(board, a, changeLists) {
@@ -246,6 +256,11 @@ export default {
         this.mergeDown(board, a, changeLists);
         this.slideDown(board, a, changeLists);
       }
+      this.board = (board.reduce((flat, current) => {
+        return flat.concat(current);
+      }, []));
+      console.log('After', this.board);
+      this.generateNum();
     },
 
     mergeDown(board, a, changeLists) {
@@ -311,6 +326,11 @@ export default {
         this.mergeUp(board, a, changeLists);
         this.slideUp(board, a, changeLists);
       }
+      this.board = (board.reduce((flat, current) => {
+        return flat.concat(current);
+      }, []));
+      console.log('After', this.board);
+      this.generateNum();
     },
 
     mergeUp(board, a, changeLists) {
@@ -414,5 +434,23 @@ export default {
   height: 368px;
   background-color: initial;
 }
+.cell {
+  font-size: 26px;
+  font-weight: bold;
+  /* background-color: #613c1a; */
+  color: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  margin: 6px;
+  justify-content: center;
+  align-items: center;
 
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  /* border: 4px solid #666; */
+  border-radius: 4px;
+  width: 80px;
+  height: 80px;
+}
 </style>
