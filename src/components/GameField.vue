@@ -1,4 +1,4 @@
-<template>
+/<template>
   <div class="game-container">
     <!-- <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" /> -->
     <div class="board shadow-border">
@@ -7,11 +7,16 @@
         <Cell :cell="c" :actValue="c.value"></Cell >
       </div>
     </div>
-
+    <div class="column-buttons">
+      <button class="menu-but" @click="newGame()" >New Game</button>
+      <button class="menu-but" @click="saveGame()" >Save game</button>
+      <button class="menu-but" @click="resumeGame()" >Resume Game</button>
+    </div>
   </div>
 </template>
 
 <script>
+/* eslint-disable no-param-reassign */
 // import _ from '../libs/lodash';
 import Cell from './Cell.vue';
 
@@ -41,6 +46,9 @@ export default {
         if (this.board[i].value === 0) { return false; }
       }
       return true;
+    },
+    savedBoard() {
+      return this.$store.state.board;
     },
   },
   methods: {
@@ -81,10 +89,30 @@ export default {
       this.generateNum();
       this.generateNum();
     },
+    saveGame() {
+      console.log('bef', this.$store.state.board);
+      this.$store.commit('saveGameBoard', this.board);
+      console.log('aft', this.$store.state.board);
+    },
+    resumeGame() {
+      console.log('oawief', this.savedBoard);
+      this.board = this.savedBoard;
+    },
     resetBoard() {
       this.board = Array(16);
       for (let i = 0; i < this.board.length; i += 1) {
         this.board[i] = { value: 0 };
+      }
+    },
+
+    animate() {
+      const boardDidChange = this.mergeGameStateList.length > 0
+        || this.slideGameStateList.length > 0;
+
+      if (boardDidChange) {
+        setTimeout(() => {
+          this.generateNum();
+        }, 100);
       }
     },
 
@@ -106,11 +134,10 @@ export default {
         this.mergeRight(board, a, changeLists);
         this.slideRight(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => {
-        return flat.concat(current);
-      }, []));
+
+      this.board = (board.reduce((flat, current) => flat.concat(current), []));
       console.log('After', this.board);
-      this.generateNum();
+      // this.generateNum();
     },
 
     mergeRight(board, a, changeLists) {
@@ -176,18 +203,16 @@ export default {
 
     moveLeft(type) {
       const changeLists = this.getChangeLists(type);
-      
+
       const board = chunk(this.board, 4);
       console.log('Before', board);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => {
-        return flat.concat(current);
-      }, []));
+      this.board = (board.reduce((flat, current) => flat.concat(current), []));
       console.log('After', this.board);
-      this.generateNum();
+      // this.generateNum();
     },
 
     mergeLeft(board, a, changeLists) {
@@ -256,11 +281,9 @@ export default {
         this.mergeDown(board, a, changeLists);
         this.slideDown(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => {
-        return flat.concat(current);
-      }, []));
+      this.board = (board.reduce((flat, current) => flat.concat(current), []));
       console.log('After', this.board);
-      this.generateNum();
+      // this.generateNum();
     },
 
     mergeDown(board, a, changeLists) {
@@ -306,8 +329,8 @@ export default {
         } else if (board[l][a].value === 0
           && board[k][a].value === 0) { // if botfromm most and fromp most elements are 0
           k -= 1;
-        } else if (board[l][a].value === 0
-          && board[k][a].value !== 0) { // if botfromm most element is 0 and fromp most element is not 0
+        } else if (board[l][a].value === 0 && board[k][a].value !== 0) {
+          // if botfromm most element is 0 and fromp most element is not 0
           changeLists.slide.push({ from: (k * 4 + a), to: (l * 4 + a) });
 
           board[l][a].value = board[k][a].value + board[l][a].value;
@@ -326,11 +349,9 @@ export default {
         this.mergeUp(board, a, changeLists);
         this.slideUp(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => {
-        return flat.concat(current);
-      }, []));
+      this.board = (board.reduce((flat, current) => flat.concat(current), []));
       console.log('After', this.board);
-      this.generateNum();
+      // this.generateNum();
     },
 
     mergeUp(board, a, changeLists) {
@@ -375,8 +396,8 @@ export default {
         } else if (board[l][a].value === 0
           && board[k][a].value === 0) { // if fromp most and botfromm most elements are 0
           k += 1;
-        } else if (board[l][a].value === 0
-          && board[k][a].value !== 0) { // if fromp most element is 0 and botfromm most element is not 0
+        } else if (board[l][a].value === 0 && board[k][a].value !== 0) {
+          // if fromp most element is 0 and botfromm most element is not 0
           changeLists.slide.push({ from: (k * 4 + a), to: (l * 4 + a) }); // add animation data
 
           board[l][a].value = board[k][a].value + board[l][a].value;
@@ -393,7 +414,7 @@ export default {
         const key = event.keyCode;
         console.log(key);
         // if (_.includes(validKeyCodes, key)) {
-        if ( key >= 37 && key <= 40) {
+        if (key >= 37 && key <= 40) {
           if (key === 39) {
             // right
             this.moveRight('gamestate');
@@ -407,7 +428,7 @@ export default {
             // down
             this.moveDown('gamestate');
           }
-          // this.animate();
+          this.animate();
         }
       });
     },
@@ -452,5 +473,17 @@ export default {
   border-radius: 4px;
   width: 80px;
   height: 80px;
+}
+.menu-but {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  width: 150px;
+  height: 60px;
+  margin: 10px;
+  display: block;
+  border-radius: 7px;
+  background-color: teal;
+  cursor: pointer;
 }
 </style>
