@@ -1,16 +1,18 @@
 /<template>
   <div class="game-container">
-    <!-- <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" /> -->
+    <!--
+      <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" />
+    -->
     <div class="board shadow-border">
       <div v-for="(c, index) in this.board" :key="index">
         <!-- {{c.value}} -->
-        <Cell :cell="c" :actValue="c.value"></Cell >
+        <Cell :cell="c" :actValue="c.value"></Cell>
       </div>
     </div>
     <div class="column-buttons">
-      <button class="menu-but" @click="newGame()" >New Game</button>
-      <button class="menu-but" @click="saveGame()" >Save game</button>
-      <button class="menu-but" @click="resumeGame()" >Resume Game</button>
+      <button class="menu-but" @click="newGame();">New Game</button>
+      <button class="menu-but" @click="saveGame();">Save game</button>
+      <button class="menu-but" @click="resumeGame();">Resume Game</button>
     </div>
   </div>
 </template>
@@ -18,15 +20,14 @@
 <script>
 /* eslint-disable no-param-reassign */
 // import _ from '../libs/lodash';
+import chunk from 'chunk';
 import Cell from './Cell.vue';
-
-const chunk = require('chunk');
+// const chunk = require('chunk');
 
 export default {
   name: 'GameField',
   components: { Cell },
-  props: {
-  },
+  props: {},
   data() {
     return {
       board: [],
@@ -43,7 +44,9 @@ export default {
   computed: {
     checkGameOver() {
       for (let i = 0; i < this.board.length; i += 1) {
-        if (this.board[i].value === 0) { return false; }
+        if (this.board[i].value === 0) {
+          return false;
+        }
       }
       return true;
     },
@@ -57,7 +60,10 @@ export default {
       this.moveDown('gamestate');
       this.moveLeft('gamestate');
       this.moveRight('gamestate');
-      if (!this.mergeGameStateList.length > 0 || !this.slideGameStateList.length > 0) {
+      if (
+        !this.mergeGameStateList.length > 0
+        || !this.slideGameStateList.length > 0
+      ) {
         this.gameOver = true;
       }
       this.mergeGameStateList = [];
@@ -69,7 +75,9 @@ export default {
     },
     // generate number on free cell
     generateNum() {
-      if (this.checkGameOver) { return; }
+      if (this.checkGameOver) {
+        return;
+      }
 
       const getRandomCell = () => {
         const getRandomPosition = Math.floor(Math.random() * this.board.length);
@@ -90,13 +98,17 @@ export default {
       this.generateNum();
     },
     saveGame() {
-      // console.log('bef', this.$store.state.board);
-      this.$store.commit('saveGameBoard', this.board);
-      // console.log('aft', this.$store.state.board);
+      localStorage.setItem('boardD', JSON.stringify(this.board));
+      const ts = JSON.parse(localStorage.getItem('boardD'));
+      console.log(ts);
     },
     resumeGame() {
       // console.log('oawief', this.savedBoard);
-      this.board = this.savedBoard;
+      // console.log(this.$ls.get.boardD);
+      const svBoard = JSON.parse(localStorage.getItem('boardD'));
+      console.log('qwetewr', svBoard[0]);
+      this.board = svBoard;
+      // localStorage.clear();
     },
     resetBoard() {
       this.board = Array(16);
@@ -135,7 +147,7 @@ export default {
         this.slideRight(board, a, changeLists);
       }
 
-      this.board = (board.reduce((flat, current) => flat.concat(current), []));
+      this.board = board.reduce((flat, current) => flat.concat(current), []);
       // console.log('After', this.board);
       // this.generateNum();
     },
@@ -148,28 +160,35 @@ export default {
       // think of i, j  pointers in the board
       // if they become separate, the pointers will try from catch up
       while (i >= 0) {
-        if (board[a][i].value === 0 && board[a][j].value === 0) { // if both elements are zero
+        if (board[a][i].value === 0 && board[a][j].value === 0) {
+          // if both elements are zero
           j -= 1;
           i -= 1;
-        } else if (board[a][i].value === board[a][j].value) { // if two elements have same value
-          changeLists.merge.push({ from: (a * 4 + i), to: (a * 4 + j) });
+        } else if (board[a][i].value === board[a][j].value) {
+          // if two elements have same value
+          changeLists.merge.push({ from: a * 4 + i, to: a * 4 + j });
 
           board[a][j].value = board[a][i].value + board[a][j].value;
           board[a][i].value = 0;
           j -= 1;
           i -= 1;
-        } else if (board[a][j].value === 0) { // if the right most has 0
+        } else if (board[a][j].value === 0) {
+          // if the right most has 0
           j -= 1;
           i -= 1;
-        } else if (board[a][i].value !== 0
+        } else if (
+          board[a][i].value !== 0
           && board[a][j].value !== 0
-          && (i + 1 === j)) { // if both are non zero and next from each other
+          && i + 1 === j
+        ) {
+          // if both are non zero and next from each other
           j -= 1;
           i -= 1;
-        } else if (board[a][i].value !== 0
-          && board[a][j].value !== 0) { // if both are non zero and not next from each other
+        } else if (board[a][i].value !== 0 && board[a][j].value !== 0) {
+          // if both are non zero and not next from each other
           j -= 1;
-        } else if (board[a][i].value === 0) { // if the left most element is zero
+        } else if (board[a][i].value === 0) {
+          // if the left most element is zero
           i -= 1;
         }
       }
@@ -179,19 +198,20 @@ export default {
       let k = board.length - 2;
       let l = board.length - 1;
       while (k >= 0) {
-        if (board[a][l].value !== 0) { // if right most element is 0
+        if (board[a][l].value !== 0) {
+          // if right most element is 0
           l -= 1;
           k -= 1;
-        } else if (board[a][l].value !== 0
-          && board[a][k].value !== 0) { // if right most and left most elements are not 0
+        } else if (board[a][l].value !== 0 && board[a][k].value !== 0) {
+          // if right most and left most elements are not 0
           l -= 1;
           k -= 1;
-        } else if (board[a][l].value === 0
-          && board[a][k].value === 0) { // if right most and left most elements are 0
+        } else if (board[a][l].value === 0 && board[a][k].value === 0) {
+          // if right most and left most elements are 0
           k -= 1;
-        } else if (board[a][l].value === 0
-          && board[a][k].value !== 0) { // if right most element is 0 and left most element is not 0
-          changeLists.slide.push({ from: (a * 4 + k), to: (a * 4 + l) });
+        } else if (board[a][l].value === 0 && board[a][k].value !== 0) {
+          // if right most element is 0 and left most element is not 0
+          changeLists.slide.push({ from: a * 4 + k, to: a * 4 + l });
 
           board[a][l].value = board[a][k].value + board[a][l].value;
           board[a][k].value = 0;
@@ -210,7 +230,7 @@ export default {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => flat.concat(current), []));
+      this.board = board.reduce((flat, current) => flat.concat(current), []);
       // console.log('After', this.board);
       // this.generateNum();
     },
@@ -223,25 +243,31 @@ export default {
         if (board[a][i].value === 0 && board[a][j].value === 0) {
           j += 1;
           i += 1;
-        } else if (board[a][i].value === board[a][j].value) { // if two elements have same value
-          changeLists.merge.push({ from: (a * 4 + i), to: (a * 4 + j) });
+        } else if (board[a][i].value === board[a][j].value) {
+          // if two elements have same value
+          changeLists.merge.push({ from: a * 4 + i, to: a * 4 + j });
 
           board[a][j].value = board[a][i].value + board[a][j].value;
           board[a][i].value = 0;
           j += 1;
           i += 1;
-        } else if (board[a][j].value === 0) { // if the left most ele has 0
+        } else if (board[a][j].value === 0) {
+          // if the left most ele has 0
           j += 1;
           i += 1;
-        } else if (board[a][i].value !== 0
+        } else if (
+          board[a][i].value !== 0
           && board[a][j].value !== 0
-          && (i - 1 === j)) { // if both are non zero and next from each other
+          && i - 1 === j
+        ) {
+          // if both are non zero and next from each other
           j += 1;
           i += 1;
-        } else if (board[a][i].value !== 0
-          && board[a][j].value !== 0) { // if both are non zero and not next from each other
+        } else if (board[a][i].value !== 0 && board[a][j].value !== 0) {
+          // if both are non zero and not next from each other
           j += 1;
-        } else if (board[a][i].value === 0) { // if the right most ele has 0
+        } else if (board[a][i].value === 0) {
+          // if the right most ele has 0
           i += 1;
         }
       }
@@ -251,19 +277,20 @@ export default {
       let k = 1;
       let l = 0;
       while (k < board.length) {
-        if (board[a][l].value !== 0) { // if left most element is 0
+        if (board[a][l].value !== 0) {
+          // if left most element is 0
           l += 1;
           k += 1;
-        } else if (board[a][l].value !== 0
-          && board[a][k].value !== 0) { // if left most and right most elements are not 0
+        } else if (board[a][l].value !== 0 && board[a][k].value !== 0) {
+          // if left most and right most elements are not 0
           l += 1;
           k += 1;
-        } else if (board[a][l].value === 0
-          && board[a][k].value === 0) { // if left most and right most elements are 0
+        } else if (board[a][l].value === 0 && board[a][k].value === 0) {
+          // if left most and right most elements are 0
           k += 1;
-        } else if (board[a][l].value === 0
-          && board[a][k].value !== 0) { // if left most element is 0 and right most element is not 0
-          changeLists.slide.push({ from: (a * 4 + k), to: (a * 4 + l) });
+        } else if (board[a][l].value === 0 && board[a][k].value !== 0) {
+          // if left most element is 0 and right most element is not 0
+          changeLists.slide.push({ from: a * 4 + k, to: a * 4 + l });
 
           board[a][l].value = board[a][k].value + board[a][l].value;
           board[a][k].value = 0;
@@ -276,12 +303,12 @@ export default {
     moveDown(type) {
       const changeLists = this.getChangeLists(type);
 
-      const board = (chunk(this.board, 4));
+      const board = chunk(this.board, 4);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeDown(board, a, changeLists);
         this.slideDown(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => flat.concat(current), []));
+      this.board = board.reduce((flat, current) => flat.concat(current), []);
       // console.log('After', this.board);
       // this.generateNum();
     },
@@ -295,7 +322,7 @@ export default {
           j -= 1;
           i -= 1;
         } else if (board[i][a].value === board[j][a].value) {
-          changeLists.merge.push({ from: (i * 4 + a), to: (j * 4 + a) });
+          changeLists.merge.push({ from: i * 4 + a, to: j * 4 + a });
 
           board[j][a].value = board[i][a].value + board[j][a].value;
           board[i][a].value = 0;
@@ -304,7 +331,11 @@ export default {
         } else if (board[j][a].value === 0) {
           j -= 1;
           i -= 1;
-        } else if (board[i][a].value !== 0 && board[j][a].value !== 0 && (i + 1 === j)) {
+        } else if (
+          board[i][a].value !== 0
+          && board[j][a].value !== 0
+          && i + 1 === j
+        ) {
           j -= 1;
           i -= 1;
         } else if (board[i][a].value !== 0 && board[j][a].value !== 0) {
@@ -319,19 +350,20 @@ export default {
       let k = board.length - 2;
       let l = board.length - 1;
       while (k >= 0) {
-        if (board[l][a].value !== 0) { // if botfromm most element is 0
+        if (board[l][a].value !== 0) {
+          // if botfromm most element is 0
           l -= 1;
           k -= 1;
-        } else if (board[l][a].value !== 0
-          && board[k][a].value !== 0) { // if botfromm most and fromp most elements are not 0
+        } else if (board[l][a].value !== 0 && board[k][a].value !== 0) {
+          // if botfromm most and fromp most elements are not 0
           l -= 1;
           k -= 1;
-        } else if (board[l][a].value === 0
-          && board[k][a].value === 0) { // if botfromm most and fromp most elements are 0
+        } else if (board[l][a].value === 0 && board[k][a].value === 0) {
+          // if botfromm most and fromp most elements are 0
           k -= 1;
         } else if (board[l][a].value === 0 && board[k][a].value !== 0) {
           // if botfromm most element is 0 and fromp most element is not 0
-          changeLists.slide.push({ from: (k * 4 + a), to: (l * 4 + a) });
+          changeLists.slide.push({ from: k * 4 + a, to: l * 4 + a });
 
           board[l][a].value = board[k][a].value + board[l][a].value;
           board[k][a].value = 0;
@@ -349,7 +381,7 @@ export default {
         this.mergeUp(board, a, changeLists);
         this.slideUp(board, a, changeLists);
       }
-      this.board = (board.reduce((flat, current) => flat.concat(current), []));
+      this.board = board.reduce((flat, current) => flat.concat(current), []);
       // console.log('After', this.board);
       // this.generateNum();
     },
@@ -362,7 +394,7 @@ export default {
           j += 1;
           i += 1;
         } else if (board[i][a].value === board[j][a].value) {
-          changeLists.merge.push({ from: (i * 4 + a), to: (j * 4 + a) }); // add animation data
+          changeLists.merge.push({ from: i * 4 + a, to: j * 4 + a }); // add animation data
 
           board[j][a].value = board[i][a].value + board[j][a].value;
           board[i][a].value = 0;
@@ -371,7 +403,11 @@ export default {
         } else if (board[j][a].value === 0) {
           j += 1;
           i += 1;
-        } else if (board[i][a].value !== 0 && board[j][a].value !== 0 && (i - 1 === j)) {
+        } else if (
+          board[i][a].value !== 0
+          && board[j][a].value !== 0
+          && i - 1 === j
+        ) {
           j += 1;
           i += 1;
         } else if (board[i][a].value !== 0 && board[j][a].value !== 0) {
@@ -386,19 +422,20 @@ export default {
       let k = 1;
       let l = 0;
       while (k < board.length) {
-        if (board[l][a].value !== 0) { // if fromp most element is 0
+        if (board[l][a].value !== 0) {
+          // if fromp most element is 0
           l += 1;
           k += 1;
-        } else if (board[l][a].value !== 0
-          && board[k][a].value !== 0) { // if fromp most and botfromm most elements are not 0
+        } else if (board[l][a].value !== 0 && board[k][a].value !== 0) {
+          // if fromp most and botfromm most elements are not 0
           l += 1;
           k += 1;
-        } else if (board[l][a].value === 0
-          && board[k][a].value === 0) { // if fromp most and botfromm most elements are 0
+        } else if (board[l][a].value === 0 && board[k][a].value === 0) {
+          // if fromp most and botfromm most elements are 0
           k += 1;
         } else if (board[l][a].value === 0 && board[k][a].value !== 0) {
           // if fromp most element is 0 and botfromm most element is not 0
-          changeLists.slide.push({ from: (k * 4 + a), to: (l * 4 + a) }); // add animation data
+          changeLists.slide.push({ from: k * 4 + a, to: l * 4 + a }); // add animation data
 
           board[l][a].value = board[k][a].value + board[l][a].value;
           board[k][a].value = 0;

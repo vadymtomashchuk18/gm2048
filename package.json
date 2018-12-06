@@ -11,6 +11,7 @@
   "dependencies": {
     "chunk": "0.0.2",
     "vue": "^2.5.17",
+    "vue-localstorage": "^0.6.2",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
