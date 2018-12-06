@@ -1,13 +1,16 @@
 /<template>
   <div class="game-container">
-    <!--
-      <Cell v-for="(cell, index) in this.board" :cell="cell" :key="index" />
-    -->
     <div class="board shadow-border">
       <div v-for="(c, index) in this.board" :key="index">
         <!-- {{c.value}} -->
         <Cell :cell="c" :actValue="c.value"></Cell>
       </div>
+      <transition name="fade">
+        <div v-if="gameOver" class="modal">
+          <h1>Game Over!</h1>
+          <a class="button button-black" @click="newGame()">Try again</a>
+        </div>
+      </transition>
     </div>
     <div class="column-buttons">
       <button class="menu-but" @click="newGame();">New Game</button>
@@ -19,10 +22,8 @@
 
 <script>
 /* eslint-disable no-param-reassign */
-// import _ from '../libs/lodash';
 import chunk from 'chunk';
 import Cell from './Cell.vue';
-// import mixins from './mixins';
 
 export default {
   name: 'GameField',
@@ -32,6 +33,7 @@ export default {
     return {
       board: [],
       gameOver: false,
+      slided: false,
       mergeAnimationsList: [],
       slideAnimationsList: [],
       mergeGameStateList: [],
@@ -86,29 +88,22 @@ export default {
       let randomCell = getRandomCell();
       while (this.board[randomCell].value !== 0) {
         randomCell = getRandomCell();
-        // console.log('Try to find ', randomCell);
       }
       // Generate 2 or 4
-      // const twoOrFour = (Math.floor(Math.random() * 2) + 1) * 2;
       this.board[randomCell].value = (Math.floor(Math.random() * 2) + 1) * 2;
     },
     newGame() {
       this.resetBoard();
       this.generateNum();
       this.generateNum();
+      this.gameOver = false;
     },
     saveGame() {
       localStorage.setItem('boardD', JSON.stringify(this.board));
-      // const ts = JSON.parse(localStorage.getItem('boardD'));
-      // console.log(ts);
     },
     resumeGame() {
-      // console.log('oawief', this.savedBoard);
-      // console.log(this.$ls.get.boardD);
       const svBoard = JSON.parse(localStorage.getItem('boardD'));
-      // console.log('qwetewr', svBoard[0]);
       this.board = svBoard;
-      // localStorage.clear();
     },
     resetBoard() {
       this.board = Array(16);
@@ -172,6 +167,7 @@ export default {
           board[a][i].value = 0;
           j -= 1;
           i -= 1;
+          this.slided = true;
         } else if (board[a][j].value === 0) {
           // if the right most has 0
           j -= 1;
@@ -187,6 +183,7 @@ export default {
         } else if (board[a][i].value !== 0 && board[a][j].value !== 0) {
           // if both are non zero and not next from each other
           j -= 1;
+          this.slided = true;
         } else if (board[a][i].value === 0) {
           // if the left most element is zero
           i -= 1;
@@ -202,13 +199,16 @@ export default {
           // if right most element is 0
           l -= 1;
           k -= 1;
+          // this.slided = true;
         } else if (board[a][l].value !== 0 && board[a][k].value !== 0) {
           // if right most and left most elements are not 0
           l -= 1;
           k -= 1;
+          this.slided = true;
         } else if (board[a][l].value === 0 && board[a][k].value === 0) {
           // if right most and left most elements are 0
           k -= 1;
+          // this.slided = true;
         } else if (board[a][l].value === 0 && board[a][k].value !== 0) {
           // if right most element is 0 and left most element is not 0
           changeLists.slide.push({ from: a * 4 + k, to: a * 4 + l });
@@ -217,6 +217,7 @@ export default {
           board[a][k].value = 0;
           l -= 1;
           k -= 1;
+          this.slided = true;
         }
       }
     },
@@ -251,6 +252,7 @@ export default {
           board[a][i].value = 0;
           j += 1;
           i += 1;
+          this.slided = true;
         } else if (board[a][j].value === 0) {
           // if the left most ele has 0
           j += 1;
@@ -266,6 +268,7 @@ export default {
         } else if (board[a][i].value !== 0 && board[a][j].value !== 0) {
           // if both are non zero and not next from each other
           j += 1;
+          this.slided = true;
         } else if (board[a][i].value === 0) {
           // if the right most ele has 0
           i += 1;
@@ -285,6 +288,7 @@ export default {
           // if left most and right most elements are not 0
           l += 1;
           k += 1;
+          this.slided = true;
         } else if (board[a][l].value === 0 && board[a][k].value === 0) {
           // if left most and right most elements are 0
           k += 1;
@@ -296,6 +300,7 @@ export default {
           board[a][k].value = 0;
           l += 1;
           k += 1;
+          this.slided = true;
         }
       }
     },
@@ -328,6 +333,7 @@ export default {
           board[i][a].value = 0;
           j -= 1;
           i -= 1;
+          this.slided = true;
         } else if (board[j][a].value === 0) {
           j -= 1;
           i -= 1;
@@ -340,6 +346,7 @@ export default {
           i -= 1;
         } else if (board[i][a].value !== 0 && board[j][a].value !== 0) {
           j -= 1;
+          this.slided = true;
         } else if (board[i][a].value === 0) {
           i -= 1;
         }
@@ -358,6 +365,7 @@ export default {
           // if botfromm most and fromp most elements are not 0
           l -= 1;
           k -= 1;
+          this.slided = true;
         } else if (board[l][a].value === 0 && board[k][a].value === 0) {
           // if botfromm most and fromp most elements are 0
           k -= 1;
@@ -369,6 +377,7 @@ export default {
           board[k][a].value = 0;
           l -= 1;
           k -= 1;
+          this.slided = true;
         }
       }
     },
@@ -400,6 +409,7 @@ export default {
           board[i][a].value = 0;
           j += 1;
           i += 1;
+          this.slided = true;
         } else if (board[j][a].value === 0) {
           j += 1;
           i += 1;
@@ -412,6 +422,7 @@ export default {
           i += 1;
         } else if (board[i][a].value !== 0 && board[j][a].value !== 0) {
           j += 1;
+          this.slided = true;
         } else if (board[i][a].value === 0) {
           i += 1;
         }
@@ -430,6 +441,7 @@ export default {
           // if fromp most and botfromm most elements are not 0
           l += 1;
           k += 1;
+          this.slided = true;
         } else if (board[l][a].value === 0 && board[k][a].value === 0) {
           // if fromp most and botfromm most elements are 0
           k += 1;
@@ -441,6 +453,7 @@ export default {
           board[k][a].value = 0;
           l += 1;
           k += 1;
+          this.slided = true;
         }
       }
     },
@@ -465,7 +478,10 @@ export default {
             // down
             this.moveDown('gamestate');
           }
-          this.animate();
+          if (this.slided) {
+            this.animate();
+            this.slided = false;
+          }
         }
       });
     },
@@ -522,5 +538,28 @@ export default {
   border-radius: 7px;
   background-color: teal;
   cursor: pointer;
+}
+.modal {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(254, 253, 251, 0.5);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+.button-black {
+  color: #1E1E12;
+  border: 1px solid #1E1E12;
+}
+.button-black:hover {
+  background-color: #1E1E12;
+  color: white;
 }
 </style>
