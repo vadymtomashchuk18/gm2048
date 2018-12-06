@@ -199,6 +199,7 @@ export default {
   color: white;
   background-color: #1E1E12;
   border: 1px solid #1E1E12;
+  cursor: pointer;
 }
 .button-black:hover {
   background-color: rgb(39, 39, 15);
