@@ -16,7 +16,7 @@
     <div class="column-buttons">
       <button class="menu-but" @click="newGame();">New Game</button>
       <button class="menu-but" @click="saveGame();">Save game</button>
-      <button class="menu-but" @click="resumeGame();">Resume Game</button>
+      <button v-if="!emptyStorage" class="menu-but" @click="resumeGame();">Resume Game</button>
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@ export default {
       board: [],
       gameOver: false,
       slided: false,
+      emptyStorage: true,
       mergeAnimationsList: [],
       slideAnimationsList: [],
       mergeGameStateList: [],
@@ -101,10 +102,13 @@ export default {
     },
     saveGame() {
       localStorage.setItem('boardD', JSON.stringify(this.board));
+      this.emptyStorage = false;
     },
     resumeGame() {
       const svBoard = JSON.parse(localStorage.getItem('boardD'));
       this.board = svBoard;
+      localStorage.clear();
+      this.emptyStorage = true;
     },
     resetBoard() {
       this.board = Array(16);
