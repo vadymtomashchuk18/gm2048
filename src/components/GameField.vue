@@ -1,5 +1,6 @@
-/<template>
+<template>
   <div class="game-container">
+
     <div class="board shadow-border">
       <div v-for="(c, index) in this.board" :key="index">
         <!-- {{c.value}} -->
@@ -199,7 +200,6 @@ export default {
           // if right most element is 0
           l -= 1;
           k -= 1;
-          // this.slided = true;
         } else if (board[a][l].value !== 0 && board[a][k].value !== 0) {
           // if right most and left most elements are not 0
           l -= 1;
