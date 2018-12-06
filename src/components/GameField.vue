@@ -90,12 +90,12 @@ export default {
       this.generateNum();
     },
     saveGame() {
-      console.log('bef', this.$store.state.board);
+      // console.log('bef', this.$store.state.board);
       this.$store.commit('saveGameBoard', this.board);
-      console.log('aft', this.$store.state.board);
+      // console.log('aft', this.$store.state.board);
     },
     resumeGame() {
-      console.log('oawief', this.savedBoard);
+      // console.log('oawief', this.savedBoard);
       this.board = this.savedBoard;
     },
     resetBoard() {
@@ -128,7 +128,7 @@ export default {
     moveRight(type) {
       const changeLists = this.getChangeLists(type);
 
-      console.log(chunk(this.board, 4));
+      // console.log(chunk(this.board, 4));
       const board = chunk(this.board, 4);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeRight(board, a, changeLists);
@@ -136,7 +136,7 @@ export default {
       }
 
       this.board = (board.reduce((flat, current) => flat.concat(current), []));
-      console.log('After', this.board);
+      // console.log('After', this.board);
       // this.generateNum();
     },
 
@@ -205,13 +205,13 @@ export default {
       const changeLists = this.getChangeLists(type);
 
       const board = chunk(this.board, 4);
-      console.log('Before', board);
+      // console.log('Before', board);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
       }
       this.board = (board.reduce((flat, current) => flat.concat(current), []));
-      console.log('After', this.board);
+      // console.log('After', this.board);
       // this.generateNum();
     },
 
@@ -282,7 +282,7 @@ export default {
         this.slideDown(board, a, changeLists);
       }
       this.board = (board.reduce((flat, current) => flat.concat(current), []));
-      console.log('After', this.board);
+      // console.log('After', this.board);
       // this.generateNum();
     },
 
@@ -350,7 +350,7 @@ export default {
         this.slideUp(board, a, changeLists);
       }
       this.board = (board.reduce((flat, current) => flat.concat(current), []));
-      console.log('After', this.board);
+      // console.log('After', this.board);
       // this.generateNum();
     },
 
@@ -412,7 +412,7 @@ export default {
       // const validKeyCodes = [39, 37, 38, 40];
       document.addEventListener('keydown', (event) => {
         const key = event.keyCode;
-        console.log(key);
+        // console.log(key);
         // if (_.includes(validKeyCodes, key)) {
         if (key >= 37 && key <= 40) {
           if (key === 39) {
