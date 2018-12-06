@@ -1,5 +1,6 @@
-/<template>
+<template>
   <div class="game-container">
+
     <div class="board shadow-border">
       <div v-for="(c, index) in this.board" :key="index">
         <!-- {{c.value}} -->
@@ -112,6 +113,7 @@ export default {
       }
     },
 
+    // =================== Moving Logic ===================
     animate() {
       const boardDidChange = this.mergeGameStateList.length > 0
         || this.slideGameStateList.length > 0;
@@ -199,7 +201,6 @@ export default {
           // if right most element is 0
           l -= 1;
           k -= 1;
-          // this.slided = true;
         } else if (board[a][l].value !== 0 && board[a][k].value !== 0) {
           // if right most and left most elements are not 0
           l -= 1;
@@ -226,14 +227,11 @@ export default {
       const changeLists = this.getChangeLists(type);
 
       const board = chunk(this.board, 4);
-      // console.log('Before', board);
       for (let a = 0; a < board.length; a += 1) {
         this.mergeLeft(board, a, changeLists);
         this.slideLeft(board, a, changeLists);
       }
       this.board = board.reduce((flat, current) => flat.concat(current), []);
-      // console.log('After', this.board);
-      // this.generateNum();
     },
 
     mergeLeft(board, a, changeLists) {
@@ -314,8 +312,6 @@ export default {
         this.slideDown(board, a, changeLists);
       }
       this.board = board.reduce((flat, current) => flat.concat(current), []);
-      // console.log('After', this.board);
-      // this.generateNum();
     },
 
     mergeDown(board, a, changeLists) {
@@ -391,8 +387,6 @@ export default {
         this.slideUp(board, a, changeLists);
       }
       this.board = board.reduce((flat, current) => flat.concat(current), []);
-      // console.log('After', this.board);
-      // this.generateNum();
     },
 
     mergeUp(board, a, changeLists) {
@@ -403,7 +397,7 @@ export default {
           j += 1;
           i += 1;
         } else if (board[i][a].value === board[j][a].value) {
-          changeLists.merge.push({ from: i * 4 + a, to: j * 4 + a }); // add animation data
+          changeLists.merge.push({ from: i * 4 + a, to: j * 4 + a });
 
           board[j][a].value = board[i][a].value + board[j][a].value;
           board[i][a].value = 0;
@@ -462,8 +456,6 @@ export default {
       // const validKeyCodes = [39, 37, 38, 40];
       document.addEventListener('keydown', (event) => {
         const key = event.keyCode;
-        // console.log(key);
-        // if (_.includes(validKeyCodes, key)) {
         if (key >= 37 && key <= 40) {
           if (key === 39) {
             // right
@@ -489,7 +481,6 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .game-container {
   display: flex;
