@@ -95,7 +95,8 @@ export default {
         randomCell = getRandomCell();
       }
       // Generate 2 or 4
-      this.board[randomCell].value = (Math.floor(Math.random() * 2) + 1) * 2;
+      // this.board[randomCell].value = (Math.floor(Math.random() * 2) + 1) * 2;
+      this.board[randomCell].value = Math.random() < 0.9 ? 2 : 4;
     },
     newGame() {
       this.resetBoard();
