@@ -33,7 +33,7 @@ export default {
   props: {},
   data() {
     return {
-      board: [],
+      board: this.$store.state.board,
       gameOver: false,
       slided: false,
       emptyStorage: true,
@@ -44,6 +44,7 @@ export default {
     };
   },
   mixins: [movesMixins],
+
   mounted() {
     this.setupBoard();
   },
@@ -57,15 +58,10 @@ export default {
       // console.log('============== gameOver ===============');
       return true;
     },
-    savedBoard() {
-      return this.$store.state.board;
-    },
+
   },
   methods: {
     checkGameState() {
-      this.moveUp('gamestate');
-      this.moveDown('gamestate');
-      this.moveLeft('gamestate');
       this.moveRight('gamestate');
       if (
         !this.mergeGameStateList.length > 0
@@ -76,8 +72,17 @@ export default {
       this.mergeGameStateList = [];
       this.slideGameStateList = [];
     },
+    savedBoard() {
+      return this.$store.state.board;
+    },
     setupBoard() {
-      this.newGame();
+      if (this.$store.state.board.length > 0) {
+        this.board = this.$store.state.board;
+        this.gameOver = false;
+      } else {
+        console.log(this.$store.state.board);
+        this.newGame();
+      }
       this.registerControl();
     },
     // generate number on free cell
@@ -95,11 +100,11 @@ export default {
         randomCell = getRandomCell();
       }
       // Generate 2 or 4
-      // this.board[randomCell].value = (Math.floor(Math.random() * 2) + 1) * 2;
       this.board[randomCell].value = Math.random() < 0.9 ? 2 : 4;
     },
     newGame() {
       this.resetBoard();
+      this.$store.commit('saveGameBoard', []);
       this.generateNum();
       this.generateNum();
       this.gameOver = false;

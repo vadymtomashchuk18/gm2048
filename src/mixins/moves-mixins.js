@@ -11,6 +11,8 @@ export default {
       if (boardDidChange) {
         setTimeout(() => {
           this.generateNum();
+          // save to persisted state
+          this.$store.commit('saveGameBoard', this.board);
         }, 100);
       }
     },
