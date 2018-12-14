@@ -80,7 +80,6 @@ export default {
         this.board = this.$store.state.board;
         this.gameOver = false;
       } else {
-        console.log(this.$store.state.board);
         this.newGame();
       }
       this.registerControl();
@@ -103,11 +102,11 @@ export default {
       this.board[randomCell].value = Math.random() < 0.9 ? 2 : 4;
     },
     newGame() {
+      this.gameOver = false;
       this.resetBoard();
       this.$store.commit('saveGameBoard', []);
       this.generateNum();
       this.generateNum();
-      this.gameOver = false;
     },
     saveGame() {
       localStorage.setItem('boardD', JSON.stringify(this.board));
